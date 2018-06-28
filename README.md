@@ -25,14 +25,17 @@ list with data sets
     }
 ```
 Create plot configuration which can additionali filter and group data.  
+time_filter defines which model attribute stores time and how to slice data using it.
+index - attributes which group data f.e. different plot foreach source
+values - attributes with values for x-axis
 ```
 PowerPlotConfig = PlotConfig(
-    model=PowerModel,
+    model=DjangoModel,
     filters={
         'key__in':[1, 2, 3],
     },
     time_filter=['optimization_hour__range', PlotConfig.opt_calc_filter_range],
     index=['source', 'optimization_hour'],
-    values=['pow', ]
+    values=['val_att', ]
 )
 ```
