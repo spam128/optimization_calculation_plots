@@ -7,7 +7,7 @@ parameter for GET request: OptimizationCalculation id
 
 output format:
 list with data sets
-```
+```python
     {
         "label": "pow",
         "data": [
@@ -28,7 +28,7 @@ Create plot configuration which can additionali filter and group data.
 time_filter defines which model attribute stores time and how to slice data using it.
 index - attributes which group data f.e. different plot foreach source
 values - attributes with values for x-axis
-```
+```python
 PowerPlotConfig = PlotConfig(
     model=DjangoModel,
     filters={
