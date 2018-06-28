@@ -7,6 +7,7 @@ parameter for GET request: OptimizationCalculation id
 
 output format:
 list with data sets
+```
     {
         "label": "pow",
         "data": [
@@ -22,9 +23,9 @@ list with data sets
                 "y": 3300
              }
     }
-
+```
 Create plot configuration which can additionali filter and group data.  
-
+```
 PowerPlotConfig = PlotConfig(
     model=PowerModel,
     filters={
@@ -34,3 +35,4 @@ PowerPlotConfig = PlotConfig(
     index=['source', 'optimization_hour'],
     values=['pow', ]
 )
+```
