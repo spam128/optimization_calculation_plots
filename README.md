@@ -24,10 +24,11 @@ list with data sets
              }
     }
 ```
-Create plot configuration which can additionali filter and group data.  
-time_filter defines which model attribute stores time and how to slice data using it.
-index - attributes which group data f.e. different plot foreach source
-values - attributes with values for x-axis
+Create plot configuration which can filter and group data.  
+
+**time_filter** defines which model attribute stores time and how to slice data using it.
+**index** - attributes which group data f.e. different plot foreach source
+**values** - attributes with values for x-axis
 ```python
 PowerPlotConfig = PlotConfig(
     model=DjangoModel,
@@ -39,3 +40,4 @@ PowerPlotConfig = PlotConfig(
     values=['val_att', ]
 )
 ```
+Then add it to view attribute
