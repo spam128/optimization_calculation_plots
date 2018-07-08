@@ -30,7 +30,7 @@ Create plot configuration which can filter and group data.
 **index** - attributes which group data f.e. different plot foreach source
 **values** - attributes with values for x-axis
 ```python
-PowerPlotConfig = PlotConfig(
+PlotConfig = PlotConfig(
     model=DjangoModel,
     filters={
         'key__in':[1, 2, 3],
@@ -41,3 +41,16 @@ PowerPlotConfig = PlotConfig(
 )
 ```
 Then add it to view attribute
+
+```python
+from .base_view import OptimizationCalculationBasedPlotView
+
+class SomeNewEP(OptimizationCalculationBasedPlotView)
+    plots_configs=[]
+```
+
+Foreach configuration response creates separate dataset.
+At the end add entry to urlpatterns in urls.py
+```python
+    url(r'^some-new-ep', SomeNewEP.as_view()),
+```
