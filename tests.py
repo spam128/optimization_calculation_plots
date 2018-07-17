@@ -34,11 +34,15 @@ class TestOptimizationPlotEndPoint(TestCase):
         m.end_time = parse_datetime(self.time_frame[1])
         self.optimization_calculation = Mock(return_value=m)
         self.optimizaton_configuration = Mock()
+        self.opt_calc_get = OptimizationCalculation.objects.get
+        self.opt_conf_get = OptimizationConfiguration.objects.get
         OptimizationCalculation.objects.get = self.optimization_calculation
         OptimizationConfiguration.objects.get = self.optimizaton_configuration
 
     def tearDown(self):
         OptimizationCalculationBasedPlotView.plots_configs = None
+        OptimizationCalculation.objects.get = self.opt_calc_get
+        OptimizationConfiguration.objects.get = self.opt_conf_get
 
     def get_mock_model(self, has_optimization_calculation=True):
         test_model = Mock()
