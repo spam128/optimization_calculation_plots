@@ -82,7 +82,7 @@ class PlotConfig:
         if hasattr(self._model, 'optimization_configuration'):
             self.filters['optimization_configuration'] = self.optimization_configuration.id
 
-        return self._model.objects.filter(**self.filters).values(*self.all_values)
+        return self._model.objects.filter(**self.filters).values(*self.all_values).order_by(*self.index)
 
     def _set_time_filter(self, start_time=0, end_time=0):
         if not hasattr(self, 'time_filter'):
