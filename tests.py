@@ -52,7 +52,7 @@ class TestOptimizationPlotEndPoint(TestCase):
             delattr(test_model, 'optimization_configuration')
         return test_model
 
-    def get_plot_config(self, test_model, time_filter, index=[], values=[], labels={}):
+    def get_plot_config(self, test_model, time_filter, index=[], values=[], labels={}, unit=''):
         index = index if index else ['source', 'optimization_hour']
         values = values if values else ['pow', ]
         return PlotConfig(
@@ -61,7 +61,8 @@ class TestOptimizationPlotEndPoint(TestCase):
             time_filter=time_filter,
             index=index,
             values=values,
-            labels=labels
+            labels=labels,
+            unit=unit
         )
 
     def get_plot_view(self, plot_configs, is_df_multiindex):
@@ -193,26 +194,30 @@ class TestOptimizationPlotEndPoint(TestCase):
         mock_model.objects.filter().values.assert_called_with('pow', 'source', 'optimization_hour')
         self.assertEqual(mock_model.objects.filter.call_args_list, [call(**plot_config.filters), call()])
 
+
     @patch(CONFIGURATIONS_PATH + '.PlotConfig.read_frame')
-    def test_multiple_plots_configs_with_labels(self, mock_read_frame):
+    def test_multiple_plots_configs_with_labels_and_unit(self, mock_read_frame):
         time_frame = [parse_datetime(time) for time in self.time_frame]
         sources = ['source1', 'source2']
         date_range = self.get_date_range(time_frame)
         values = self.generate_plot_values(sources, date_range)
         time_filter = ['optimization_hour__range', PlotConfig.opt_calc_filter_range]
         labels = {'source1': 'label1', 'source2': 'label2'}
+        unit='t/h'
 
         expected_response_data = self.get_expected_response_data(values, sources, date_range)
         expected_response_data += self.get_expected_response_data(values, sources, date_range)
         expected_response_data[2]['label'] = '{} {}'.format(labels['source1'], 'pow')
+        expected_response_data[2]['unit'] = unit
         expected_response_data[3]['label'] = '{} {}'.format(labels['source2'], 'pow')
+        expected_response_data[3]['unit'] = unit
 
         queryset_data = self.get_queryset_data(date_range)
         mock_read_frame.side_effect = pd.DataFrame(data=queryset_data), pd.DataFrame(data=queryset_data)
 
         mock_model = self.get_mock_model()
         plot_config = self.get_plot_config(mock_model, time_filter=time_filter)
-        plot_config2 = self.get_plot_config(mock_model, time_filter=time_filter, labels=labels)
+        plot_config2 = self.get_plot_config(mock_model, time_filter=time_filter, labels=labels, unit=unit)
         view = self.get_plot_view([plot_config, plot_config2], is_df_multiindex=True)
 
         response = self.request_get(view)
