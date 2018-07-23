@@ -4,8 +4,8 @@ from rest_framework.generics import ListAPIView
 from collections import namedtuple
 from django.http import HttpResponseNotFound, HttpResponseServerError
 
-from .models import OptimizationCalculation, OptimizationConfiguration
-from .serializers import PlotDataSerializer
+from CommunicationHubRestApi.models import OptimizationCalculation, OptimizationConfiguration
+from CommunicationHubRestApi.serializers import PlotDataSerializer
 import logging
 
 log = logging.getLogger(__name__)
@@ -46,13 +46,13 @@ class OptimizationCalculationBasedPlotView(ListAPIView):
     def add_plot_by_source_to_pandas_list(self, plot, pd_list):
         df = plot.df
         if not self._is_df_multiindex(df):
-            pd_list.add_ds(df.loc[:, plot.values[0]], plot.name)
+            pd_list.add_ds(df.loc[:, plot.values[0]], plot.name, unit=plot.unit)
             return
         for source_name, frame in self.group_df_by_index(df):
             frame.index = frame.index.droplevel()
             for value in plot.values:
                 label = plot.labels.get(source_name, source_name)
-                pd_list.add_ds(frame.loc[:, value], label)
+                pd_list.add_ds(frame.loc[:,value], label, unit=plot.unit)
 
     @staticmethod
     def _is_df_multiindex(df):
@@ -74,14 +74,14 @@ class PandasList(list):
     Extended list with method add_ds, converting pandas data series into serializable objects
     """
 
-    def add_ds(self, data, label=None):
+    def add_ds(self, data, label=None, unit=''):
         PandasObj = namedtuple('PandasObj', 'label data unit')
         data_col_name = data.columns[0] if hasattr(data, 'columns') else ''
         data_name = getattr(data, 'name', data_col_name)
         kwargs = {
             'label': data_name if not label else '{} {}'.format(label, data_name),
             'data': [{'x': x, 'y': y} for x, y in zip(data.index, data.values)],
-            'unit': ''
+            'unit': unit
         }
         obj = PandasObj(**kwargs)
         self.append(obj)
