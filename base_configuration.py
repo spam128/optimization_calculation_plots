@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import timedelta
-from django_pandas.io import read_frame
+from .plot_utils import read_frame
 import pandas as pd
 
 
@@ -22,7 +22,7 @@ class PlotConfig:
 
     TIME_FREQUENCE = 'H'
 
-    def __init__(self, model, filters, time_filter, index=[], values=[], labels={}):
+    def __init__(self, model, filters, time_filter, index=[], values=[], labels={}, unit=''):
         self._model = model
         self.filters = filters
         self.index = index
@@ -33,6 +33,7 @@ class PlotConfig:
             find_index = self.time_filter.find('__')
             self.time_field = self.time_filter[:find_index] if find_index > -1 else self.time_filter
         self.labels = labels
+        self.unit = unit
 
     @property
     def all_values(self):
@@ -121,9 +122,11 @@ class PlotConfig:
 
     @staticmethod
     def opt_calc_filter_delta(start_time, end_time):
+        """ when time is datetimefield """
         time_delta = end_time - start_time
         return 0, int(time_delta.days * 24 + time_delta.seconds / 3600) + 1
 
     @staticmethod
     def opt_calc_filter_range(start_time, end_time):
+        """ when time is integerfield """
         return start_time, end_time
